@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Fusion Home{% endblock title %}
+
+{% block Content %}
+
+<div class="container">
+
+    <h1>Lista de Ocorrências</h1>
+    <a href="{% url 'logout_acesso' %}" class="waves-effect waves-light btn">
+        <i class="material-icons left">cloud</i>Logout
+    </a>
+    <a href="{% url 'add_ocorrencia' %}" class="waves-effect waves-light btn">
+        <i class="material-icons left">cloud</i>Add Ocorrência
+    </a>
+    {% for ocorrencia in ocorrencias %}
+        <h3>OC {{ ocorrencia.pk }}</h3>
+        <h5>Empreendimento:</h5><p>{{ ocorrencia.empreendimento.nome }}</p>
+        <h5>Cliente:</h5><p>{{ ocorrencia.cliente.nome }}</p>
+        <h5>Movimentações:</h5>
+            <ul>
+                {% for movimentacao in ocorrencia.movimentacoes.all %}
+                <li>
+                    <p>{{ movimentacao.status.status }} - {{ movimentacao.comentario }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+    {% endfor %}
+</div>
+
+{% endblock Content %}

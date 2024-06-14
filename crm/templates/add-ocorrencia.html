@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Fusion Home{% endblock %}
+
+{% block Content %}
+<div class="container">
+    <h1>Adicionar Ocorrência</h1>
+    <a href="{% url 'home' %}" class="waves-effect waves-light btn">
+        <i class="material-icons left">cloud</i>Home
+    </a>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <h3>Movimentações</h3>
+        {{ formset.management_form }}
+        <div id="movimentacao-forms">
+            {% for form in formset %}
+                <div class="movimentacao-form">
+                    {{ form.as_p }}
+                    <button type="button" class="remove-movimentacao waves-effect waves-light btn red">Remover</button>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-movimentacao" class="waves-effect waves-light btn">Adicionar Movimentação</button>
+        
+        <button type="submit" class="waves-effect waves-light btn">Salvar</button>
+    </form>
+</div>
+
+<style>
+    .movimentacao-form {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
+
+        document.querySelectorAll('.remove-movimentacao').forEach(function(button) {
+            button.addEventListener('click', function() {
+                this.closest('.movimentacao-form').remove();
+            });
+        });
+
+        document.getElementById('add-movimentacao').addEventListener('click', function() {
+            var totalForms = document.querySelector('[name="movimentacao_set-TOTAL_FORMS"]');
+            var formCount = parseInt(totalForms.value);
+            var newForm = document.querySelector('.movimentacao-form').cloneNode(true);
+
+            // Clear the values of the inputs in the cloned form
+            newForm.querySelectorAll('input, select, textarea').forEach(function(input) {
+                if (input.type !== 'hidden') {
+                    input.name = input.name.replace(`-${formCount-1}-`, `-${formCount}-`);
+                    input.id = input.id.replace(`_${formCount-1}_`, `_${formCount}_`);
+                    input.value = '';
+                }
+            });
+
+            // Add event listener for the remove button in the new form
+            newForm.querySelector('.remove-movimentacao').addEventListener('click', function() {
+                this.closest('.movimentacao-form').remove();
+            });
+
+            document.getElementById('movimentacao-forms').appendChild(newForm);
+            totalForms.value = formCount + 1;
+            M.FormSelect.init(newForm.querySelectorAll('select'));
+        });
+    });
+</script>
+{% endblock %}
