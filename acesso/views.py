@@ -1,6 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout, authenticate
+from .models import Usuario
+from .forms import UsuarioForm
+from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 def login_acesso(request):
@@ -25,4 +28,24 @@ def logout_acesso(request):
     return redirect('login_acesso')
 
 def cadastro(request):
-    return render(request, 'cadastro.html')
+
+    if request.method == "POST":
+        form = UsuarioForm(request.POST)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.password = make_password(form.cleaned_data['password'])
+            user.save()
+            user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+
+            if user is not None:
+                login(request,user)
+                return redirect('home')
+    else:
+        form = UsuarioForm()
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'cadastro.html', context)

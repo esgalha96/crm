@@ -3,7 +3,7 @@
 {% block title %}Fusion Home{% endblock %}
 
 {% block Content %}
-<div class="container">
+<div class="container" style="padding-bottom: 20px;">
     <h1>Adicionar Ocorrência</h1>
     <a href="{% url 'home' %}" class="waves-effect waves-light btn">
         <i class="material-icons left">cloud</i>Home
@@ -46,12 +46,18 @@
 
         document.querySelectorAll('.remove-movimentacao').forEach(function(button) {
             button.addEventListener('click', function() {
-                this.closest('.movimentacao-form').remove();
+                if( console.log($(this.closest('.movimentacao-form')).find("#id_movimentacoes-0-ocorrencia").length) === 0){
+                    this.closest('.movimentacao-form').remove();
+                }
+                else{
+                    alert("A ocorrência deve ter pelo menos 1 movimentação!")
+                }
+                
             });
         });
 
         document.getElementById('add-movimentacao').addEventListener('click', function() {
-            var totalForms = document.querySelector('[name="movimentacao_set-TOTAL_FORMS"]');
+            var totalForms = document.querySelector('[name="movimentacoes-TOTAL_FORMS"]');
             var formCount = parseInt(totalForms.value);
             var newForm = document.querySelector('.movimentacao-form').cloneNode(true);
 

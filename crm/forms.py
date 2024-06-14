@@ -31,5 +31,6 @@ class BaseMovimentacaoFormSet(BaseInlineFormSet):
         super(BaseMovimentacaoFormSet, self).__init__(*args, **kwargs)
         for form in self.forms:
             form.user = self.user
+            form.fields['operador_responsavel'].queryset = Usuario.objects.filter(pk=form.user.pk)
 
 MovimentacaoFormSet = inlineformset_factory(Ocorrencia, Movimentacao, form=MovimentacaoForm, formset=BaseMovimentacaoFormSet, fields=['comentario', 'operador_responsavel', 'status'], extra=1, can_delete=True)

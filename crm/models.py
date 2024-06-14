@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import datetime as dt
 
 class Status(models.Model):
     status = models.CharField(max_length=50, verbose_name="Status")
@@ -38,6 +39,7 @@ class Movimentacao(models.Model):
     comentario = models.TextField(verbose_name="Comentário")
     operador_responsavel = models.ForeignKey("acesso.Usuario", on_delete=models.PROTECT, verbose_name="Operador Responsável")
     status = models.ForeignKey("Status", on_delete=models.PROTECT, verbose_name="Status")
+    data = models.DateField(default=dt.now())
 
     def __str__(self):
         return f"{self.ocorrencia} - {self.pk}"
